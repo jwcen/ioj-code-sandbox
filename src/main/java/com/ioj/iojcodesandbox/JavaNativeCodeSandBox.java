@@ -31,7 +31,12 @@ public class JavaNativeCodeSandBox implements CodeSandBox {
         JavaNativeCodeSandBox javaNativeCodeSandBox = new JavaNativeCodeSandBox();
         ExecuteCodeRequest executeCodeRequest = new ExecuteCodeRequest();
         executeCodeRequest.setInputList(Arrays.asList("1 2", "1 3"));
-        String code = ResourceUtil.readStr("testCode/simpleComputeArgs/Main.java", StandardCharsets.UTF_8);
+//        String code = ResourceUtil.readStr("testCode/simpleComputeArgs/Main.java", StandardCharsets.UTF_8);
+//        String code = ResourceUtil.readStr("testCode/unsafeCode/SleepError.java", StandardCharsets.UTF_8);
+//        String code = ResourceUtil.readStr("testCode/unsafeCode/MemoryError.java", StandardCharsets.UTF_8);
+//        String code = ResourceUtil.readStr("testCode/unsafeCode/ReadFileError.java", StandardCharsets.UTF_8);
+//        String code = ResourceUtil.readStr("testCode/unsafeCode/WriteFileError.java", StandardCharsets.UTF_8);
+        String code = ResourceUtil.readStr("testCode/unsafeCode/RunFileError.java", StandardCharsets.UTF_8);
         executeCodeRequest.setCode(code);
         executeCodeRequest.setLanguage("Java");
 
@@ -110,10 +115,10 @@ public class JavaNativeCodeSandBox implements CodeSandBox {
         executeCodeResponse.setJudgeInfo(judgeInfo);
 
         // 5. 文件清理
-        if (userCodeFile.getParentFile() != null) {
-            boolean del = FileUtil.del(userCodeParenPath);
-            System.out.println("删除" + (del ? "成功" : "失败"));
-        }
+//        if (userCodeFile.getParentFile() != null) {
+//            boolean del = FileUtil.del(userCodeParenPath);
+//            System.out.println("删除" + (del ? "成功" : "失败"));
+//        }
 
         return executeCodeResponse;
     }
