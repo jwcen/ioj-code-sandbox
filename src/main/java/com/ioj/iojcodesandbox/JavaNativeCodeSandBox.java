@@ -27,16 +27,21 @@ public class JavaNativeCodeSandBox implements CodeSandBox {
 
     public static final String GLOBAL_JAVA_CODE_NAME = "Main.java";
 
+    /**
+     * 超时时间设为5s
+     */
+    public static final long TIMEOUT = 5000L;
+
     public static void main(String[] args) {
         JavaNativeCodeSandBox javaNativeCodeSandBox = new JavaNativeCodeSandBox();
         ExecuteCodeRequest executeCodeRequest = new ExecuteCodeRequest();
         executeCodeRequest.setInputList(Arrays.asList("1 2", "1 3"));
 //        String code = ResourceUtil.readStr("testCode/simpleComputeArgs/Main.java", StandardCharsets.UTF_8);
-//        String code = ResourceUtil.readStr("testCode/unsafeCode/SleepError.java", StandardCharsets.UTF_8);
+        String code = ResourceUtil.readStr("testCode/unsafeCode/SleepError.java", StandardCharsets.UTF_8);
 //        String code = ResourceUtil.readStr("testCode/unsafeCode/MemoryError.java", StandardCharsets.UTF_8);
 //        String code = ResourceUtil.readStr("testCode/unsafeCode/ReadFileError.java", StandardCharsets.UTF_8);
 //        String code = ResourceUtil.readStr("testCode/unsafeCode/WriteFileError.java", StandardCharsets.UTF_8);
-        String code = ResourceUtil.readStr("testCode/unsafeCode/RunFileError.java", StandardCharsets.UTF_8);
+//        String code = ResourceUtil.readStr("testCode/unsafeCode/RunFileError.java", StandardCharsets.UTF_8);
         executeCodeRequest.setCode(code);
         executeCodeRequest.setLanguage("Java");
 
@@ -78,6 +83,15 @@ public class JavaNativeCodeSandBox implements CodeSandBox {
             String runCmd = String.format("java -cp %s Main %s", userCodeParenPath, inputArgs);
             try {
                 Process runProcess = Runtime.getRuntime().exec(runCmd);
+                new Thread(()->{
+                    try {
+                        Thread.sleep(TIMEOUT);
+                        runProcess.destroy();
+                        System.out.println("程序运行超时，已中断");
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
                 ExecuteMessage executeMessage = ProcessUtils.runAndGetMessage(runProcess, "运行");
                 executeMessageList.add(executeMessage);
                 System.out.println(executeMessage);
