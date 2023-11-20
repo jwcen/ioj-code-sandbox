@@ -20,6 +20,8 @@ import cn.hutool.core.io.resource.ResourceUtil;
 import com.ioj.iojcodesandbox.model.ExecuteCodeRequest;
 import com.ioj.iojcodesandbox.model.ExecuteCodeResponse;
 import com.ioj.iojcodesandbox.model.ExecuteMessage;
+import com.ioj.iojcodesandbox.security.DefaultSecurityManager;
+import com.ioj.iojcodesandbox.security.DenyAllSecurityManager;
 import com.ioj.iojcodesandbox.utils.ProcessUtils;
 import org.springframework.util.StopWatch;
 
@@ -64,6 +66,9 @@ public class JavaNativeCodeSandBox implements CodeSandBox {
 
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
+//        System.setSecurityManager(new DefaultSecurityManager());
+        System.setSecurityManager(new DenyAllSecurityManager());
+
         List<String> inputList = executeCodeRequest.getInputList();
         String code = executeCodeRequest.getCode();
 
