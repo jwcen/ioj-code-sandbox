@@ -22,6 +22,7 @@ import com.ioj.iojcodesandbox.model.ExecuteCodeResponse;
 import com.ioj.iojcodesandbox.model.ExecuteMessage;
 import com.ioj.iojcodesandbox.security.DefaultSecurityManager;
 import com.ioj.iojcodesandbox.security.DenyAllSecurityManager;
+import com.ioj.iojcodesandbox.security.SelfDefineSecurityManager;
 import com.ioj.iojcodesandbox.utils.ProcessUtils;
 import org.springframework.util.StopWatch;
 
@@ -67,16 +68,17 @@ public class JavaNativeCodeSandBox implements CodeSandBox {
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
 //        System.setSecurityManager(new DefaultSecurityManager());
-        System.setSecurityManager(new DenyAllSecurityManager());
+//        System.setSecurityManager(new DenyAllSecurityManager());
+        System.setSecurityManager(new SelfDefineSecurityManager());
 
         List<String> inputList = executeCodeRequest.getInputList();
         String code = executeCodeRequest.getCode();
 
-        FoundWord foundWord = WORD_TREE.matchWord(code);
-        if (foundWord != null) {
-            System.out.println(foundWord.getFoundWord());
-            return null;
-        }
+//        FoundWord foundWord = WORD_TREE.matchWord(code);
+//        if (foundWord != null) {
+//            System.out.println(foundWord.getFoundWord());
+//            return null;
+//        }
 
         // 1. 将用户代码保存为文件
         String userDir = System.getProperty("user.dir");
@@ -104,7 +106,7 @@ public class JavaNativeCodeSandBox implements CodeSandBox {
         // 3. java 执行代码，获取运行结果
         List<ExecuteMessage> executeMessageList = new ArrayList<>();
         for (String inputArgs : inputList) {
-            String runCmd = String.format("java -Xmx256m -Dfile.encoding=UTF-8 -cp %s Main %s", userCodeParenPath, inputArgs);
+            String runCmd = String.format("java -Dfile.encoding=UTF-8 -cp %s;%s -Djava.security.manager=MySecurityManager Main", userCodeParenPath, inputArgs);
             try {
                 Process runProcess = Runtime.getRuntime().exec(runCmd);
                 new Thread(()->{
